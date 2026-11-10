@@ -12,8 +12,12 @@ import { CommandsRegistry } from 'vs/platform/commands/common/commands';
 import { ViewPaneContainer } from 'vs/workbench/browser/parts/views/viewPaneContainer';
 import { IViewContainersRegistry, IViewsRegistry, ViewContainer, ViewContainerLocation, Extensions as ViewExtensions } from 'vs/workbench/common/views';
 import { DeepSeekChatView } from 'vs/workbench/contrib/deepseek/browser/deepseekChatView';
+import { DeepSeekHomeView } from 'vs/workbench/contrib/deepseek/browser/deepseekHomeView';
 import { IDeepSeekAgentService } from 'vs/workbench/services/deepseek/common/deepseekAgentService';
 import { DeepSeekAgentService } from 'vs/workbench/services/deepseek/browser/deepseekAgentService';
+import { IDeepSeekAccountService } from 'vs/workbench/services/deepseek/common/deepseekAccountService';
+import { DeepSeekAccountService } from 'vs/workbench/services/deepseek/browser/deepseekAccountService';
+import 'vs/workbench/contrib/deepseek/browser/deepseekAuthProvider';
 
 /**
  * DeepSeek 融合模块的注册入口（M1）。
@@ -21,8 +25,9 @@ import { DeepSeekAgentService } from 'vs/workbench/services/deepseek/browser/dee
  * 该官方文件改动登记在 zovaxai.com 仓库的 docs/PATCHES.md。
  */
 
-// 1) Agent 服务：编辑器级公共能力，Delayed 注册（首次使用时实例化）
+// 1) 服务：编辑器级公共能力，Delayed 注册（首次使用时实例化）
 registerSingleton(IDeepSeekAgentService, DeepSeekAgentService, InstantiationType.Delayed);
+registerSingleton(IDeepSeekAccountService, DeepSeekAccountService, InstantiationType.Delayed);
 
 // 2) 视图容器：辅助侧边栏一级入口（标准 ViewPaneContainer 注册法，与官方各 contrib 一致）
 const viewContainer: ViewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewContainersRegistry).registerViewContainer(
@@ -38,9 +43,17 @@ const viewContainer: ViewContainer = Registry.as<IViewContainersRegistry>(ViewEx
 	{ isDefault: true },
 );
 
-// 3) 聊天视图
+// 3) 视图：账户主页（登录/签到）在前，对话视图在后
 Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews(
 	[
+		{
+			id: DeepSeekHomeView.ID,
+			name: { value: '账户', original: 'Account' },
+			ctorDescriptor: new SyncDescriptor(DeepSeekHomeView),
+			canToggleVisibility: false,
+			canMoveView: true,
+			containerIcon: Codicon.account,
+		},
 		{
 			id: DeepSeekChatView.ID,
 			name: { value: 'DeepSeek 对话', original: 'DeepSeek Chat' },
