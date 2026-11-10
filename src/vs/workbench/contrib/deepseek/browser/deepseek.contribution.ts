@@ -99,3 +99,7 @@ Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration).regis
 		},
 	},
 });
+
+// S1 agent shell (layout + Open Agents Window) — compile-verified local integration
+import 'vs/workbench/contrib/deepseek/browser/agentsWindow';
+import 'vs/workbench/contrib/deepseek/browser/agentLayout';

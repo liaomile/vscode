@@ -427,6 +427,9 @@ import './contrib/languageStatus/browser/languageStatus.contribution.js';
 // Authentication
 import './contrib/authentication/browser/authentication.contribution.js';
 
+// DeepSeek / ZovaX agent shell (S1 + M1): PATCHES #1
+import './contrib/deepseek/browser/deepseek.contribution.js';
+
 // User Data Sync
 import './contrib/userDataSync/browser/userDataSync.contribution.js';
 
