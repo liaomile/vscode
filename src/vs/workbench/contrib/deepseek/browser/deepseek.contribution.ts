@@ -79,5 +79,10 @@ Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration).regis
 			default: 'deepseek-reasoner',
 			description: '规划阶段使用的模型。',
 		},
+		'deepseek.acpCommand': {
+			type: 'string',
+			default: '',
+			description: '拉起 DSH ACP 服务端的完整命令，如 "pnpm dsh --profile acp"（需在本机 DSH 仓库目录可执行）。留空则不自动拉起。',
+		},
 	},
 });

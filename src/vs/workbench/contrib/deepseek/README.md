@@ -8,15 +8,30 @@
 - `../../services/deepseek/common/deepseekAgentService.ts` — `IDeepSeekAgentService` 公共服务接口
 - `../../services/deepseek/browser/deepseekAgentService.ts` — 服务实现骨架（M2 接 ACP 通道）
 
-## 唯一一处官方文件改动（本地应用）
+## 官方文件改动（共 3 处，均已登记在 zovaxai.com 仓库 docs/PATCHES.md，本地应用）
 
-在 `src/vs/workbench/workbench.common.main.ts` 的 contrib import 区加一行：
+1. `src/vs/workbench/workbench.common.main.ts` 的 contrib import 区加一行：
 
 ```ts
 import 'vs/workbench/contrib/deepseek/browser/deepseek.contribution';
 ```
 
-此改动已登记在 zovaxai.com 仓库 `docs/PATCHES.md` 第 1 条；合并官方新版本时按表核对。
+2. electron-main 服务装配处：实例化 `src/vs/platform/deepseek/electron-main/deepseekAcpHostMainService.ts`
+   的 `DeepSeekAcpHostMainService`，并把其 IChannel 注册到主进程 IPC 服务器，通道名 `deepseekAcp`。
+
+3. `src/vs/workbench/workbench.desktop.main.ts` 加一行（仅桌面端加载 ACP 引导）：
+
+```ts
+import 'vs/workbench/contrib/deepseek/electron-browser/deepseekAcpBootstrap';
+```
+
+## M2 链路（ACP）
+
+聊天视图 → IDeepSeekAgentService →（注入后）AcpClient → 'deepseekAcp' 通道 →
+主进程 ACP 宿主 → 子进程 stdio → DSH `dsh --profile acp`。
+使用前在设置里配置 `deepseek.acpCommand`（如在本机 DSH 仓库可执行的 `pnpm dsh --profile acp`），
+工作区根目录作为会话 cwd。DSH 侧的 provider/model 与 API 凭据按 DSH 自身的配置方式提供，
+编辑器不接触明文密钥。
 
 ## 构建与验证（本地）
 

@@ -44,6 +44,11 @@ export class DeepSeekAgentService extends Disposable implements IDeepSeekAgentSe
 		this.acpCwd = cwd;
 	}
 
+	/** 供 ACP 客户端的 onUpdate 回调使用：把通道回流的更新转发到本服务的事件流 */
+	handleAcpUpdate(update: DeepSeekSessionUpdate): void {
+		this._onSessionUpdate.fire(update);
+	}
+
 	/** 供 ACP 客户端的权限回调使用：把审批请求推给界面，等 answerApproval 应答 */
 	requestPermissionFromUi(sessionId: string, requestId: string, title: string): Promise<boolean> {
 		this._onSessionUpdate.fire({ kind: 'approvalRequest', sessionId, requestId, title });
