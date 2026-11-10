@@ -99,6 +99,15 @@ export class DeepSeekAccountService extends Disposable implements IDeepSeekAccou
 				if (parsed.monthKey === monthKey) {
 					return parsed;
 				}
+				// 跨月：只重置本月签到日历，连续天数/上次签到日/积分余额必须保留，
+				// 否则月末签到、月初续签时连续记录会被误清（服务端实现同样按此口径）
+				return {
+					monthKey,
+					signedDays: [],
+					streakDays: parsed.streakDays,
+					lastSignedDay: parsed.lastSignedDay,
+					credits: parsed.credits,
+				};
 			} catch {
 				/* 状态损坏则重建 */
 			}
